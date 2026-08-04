@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>CCTV-HJHL 阖家欢乐台 - 官方网站</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: auto;
+    }
+    body {
+      font-family: "宋体", SimSun, serif;
+      font-size: 14px;
+      background: #e8e8e8;
+      color: #000;
+      line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: rgba(200, 0, 0, 0.15);
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    #container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #fff;
+      border-left: 1px solid #999;
+      border-right: 1px solid #999;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+    #header {
+      min-height: 90px;
+      background: linear-gradient(180deg, #c00 0%, #8b0000 100%);
+      color: #ffd700;
+      text-align: center;
+      padding: 15px 10px;
+      border-bottom: 3px solid #ffd700;
+      position: relative;
+      overflow: hidden;
+    }
+    #header h1 {
+      font-size: clamp(20px, 5vw, 32px);
+      letter-spacing: 4px;
+      text-shadow: 2px 2px 0 #000;
+      font-family: "黑体", SimHei, sans-serif;
+    }
+    #header .sub {
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-top: 5px;
+      color: #ffe;
+    }
+    #header .date {
+      position: absolute;
+      right: 8px;
+      top: 6px;
+      font-size: 11px;
+      color: #fff;
+    }
+    #nav {
+      background: #2b2b2b;
+      border-bottom: 2px solid #c00;
+      display: flex;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    #nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 14px;
+      display: inline-block;
+      font-size: 13px;
+      border-right: 1px solid #444;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    #nav a:hover { background: #c00; }
+    #nav a:active { background: #a00; }
+    #main {
+      display: flex;
+      flex-direction: column;
+      min-height: 500px;
+    }
+    #sidebar {
+      width: 100%;
+      background: #f5f5f5;
+      border-right: none;
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+    }
+    #content {
+      width: 100%;
+      padding: 15px 10px;
+      background: #fff;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media(min-width:768px) {
+      #main { flex-direction: row; }
+      #sidebar { width: 200px; min-width: 200px; border-right: 1px solid #ccc; border-bottom: none; }
+      #content { width: calc(100% - 200px); padding: 20px; }
+      #nav a { padding: 8px 12px; }
+    }
+    .side-box { border: 1px solid #ccc; margin-bottom: 10px; background: #fff; }
+    .side-title { background: #c00; color: #fff; padding: 4px 8px; font-size: 13px; font-weight: bold; }
+    .side-content { padding: 8px; font-size: 12px; }
+    .side-content ul { list-style: none; }
+    .side-content li {
+      padding: 8px 6px; border-bottom: 1px dashed #ddd; cursor: pointer;
+      user-select: none; -webkit-user-select: none; transition: color 0.15s; min-height: 36px;
+      display: flex; align-items: center;
+    }
+    .side-content li:hover { color: #c00; }
+    .side-content li:active { background: #fff0f0; }
+    .clue-item { color: #666; font-size: 11px; padding: 4px 2px; transition: color 0.3s; }
+    .clue-item.unlocked { color: #c00; font-weight: bold; }
+    .page-title {
+      font-size: clamp(18px, 4vw, 20px); color: #c00; border-bottom: 2px solid #c00;
+      padding-bottom: 5px; margin-bottom: 15px; font-family: "黑体", SimHei, sans-serif;
+    }
+    .news-item {
+      padding: 14px 8px; border-bottom: 1px dashed #ccc; cursor: pointer;
+      user-select: none; -webkit-user-select: none; transition: background 0.15s;
+      min-height: 44px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .news-item:hover { background: #fff8dc; }
+    .news-item:active { background: #fff0c0; }
+    .news-title { font-size: 15px; color: #000080; font-weight: bold; }
+    .news-meta { font-size: 12px; color: #666; margin-top: 3px; }
+    .schedule-wrap {
+      overflow-x: auto; -webkit-overflow-scrolling: touch; will-change: scroll-position;
+      -webkit-transform: translateZ(0); transform: translateZ(0); border: 1px solid #e0e0e0; border-radius: 2px;
+    }
+    .schedule-table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 12px; }
+    .schedule-table th, .schedule-table td { border: 1px solid #ccc; padding: 7px 6px; text-align: center; }
+    .schedule-table th { background: #f0f0f0; position: sticky; top: 0; }
+    .schedule-table .abnormal { color: red; text-decoration: line-through; cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .schedule-table .abnormal:hover { background: #fff0f0; }
+    .gibberish {
+      color: #333; letter-spacing: 1px; user-select: none; -webkit-user-select: none;
+      cursor: pointer; transition: color 0.3s, font-weight 0.3s; display: inline;
+    }
+    .gibberish:hover { background: #fff8dc; outline: 1px dashed #c00; outline-offset: 2px; }
+    .gibberish.revealed { color: #c00; font-weight: bold; }
+    #footer {
+      background: #2b2b2b; color: #999; text-align: center; padding: 15px 8px;
+      font-size: 12px; border-top: 3px solid #c00;
+    }
+    .modal {
+      display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: #fff; border: 2px solid #c00; padding: 16px; width: 92%; max-width: 500px;
+      max-height: 80vh; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 100;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5); border-radius: 2px; will-change: transform;
+    }
+    .modal h3 { color: #c00; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; padding-right: 30px; }
+    .modal-close {
+      float: right; cursor: pointer; color: #999; font-size: 22px; line-height: 1;
+      padding: 4px 10px; min-width: 44px; min-height: 44px; display: flex; align-items: center;
+      justify-content: center; user-select: none; -webkit-user-select: none; border-radius: 4px;
+      transition: background 0.15s, color 0.15s; position: absolute; top: 10px; right: 12px; z-index: 5;
+    }
+    .modal-close:hover { color: #c00; background: #fff0f0; }
+    #overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); z-index: 99; cursor: pointer;
+    }
+    @keyframes flicker { 0%,100%{opacity:1} 25%{opacity:0.2} 50%{opacity:0.7} 75%{opacity:0.1} }
+    .flicker { animation: flicker 0.4s ease-in-out 3; }
+    .scanlines::before {
+      content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06) 1px, transparent 1px, transparent 3px);
+      pointer-events: none !important; z-index: 1000;
+    }
+    @keyframes glitchShift { 0%,100%{transform:translate(0,0)} 15%{transform:translate(-3px,2px)} 30%{transform:translate(3px,-1px)} 45%{transform:translate(-1px,-2px)} 60%{transform:translate(2px,1px)} 75%{transform:translate(-2px,-1px)} 90%{transform:translate(1px,2px)} }
+    body.glitch-active #container { animation: glitchShift 0.6s ease-in-out; }
+    body.glitch-active { background: #000 !important; transition: background 0.1s; }
+    .ending { text-align: center; padding: 30px 12px; color: #c00; }
+    .ending h2 { font-size: 24px; margin-bottom: 20px; }
+    .code-input {
+      width: 100%; padding: 12px 10px; border: 1px solid #ccc; margin: 10px 0;
+      font-family: "宋体", serif; font-size: 16px; border-radius: 2px; -webkit-appearance: none;
+      appearance: none; outline: none; transition: border-color 0.2s;
+    }
+    .code-input:focus { border-color: #c00; box-shadow: 0 0 4px rgba(200,0,0,0.2); }
+    .submit-btn {
+      background: #c00; color: #fff; border: none; padding: 12px 24px; min-height: 44px;
+      min-width: 80px; cursor: pointer; font-family: "宋体", serif; font-size: 15px;
+      border-radius: 2px; user-select: none; -webkit-user-select: none; transition: background 0.15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .submit-btn:hover { background: #a00; }
+    .submit-btn:active { background: #800; transform: scale(0.97); }
+    .hint-text { font-size: 12px; color: #666; margin-top: 5px; font-style: italic; }
+    .staff-wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .staff-card {
+      width: calc(50% - 8px); min-width: 140px; border: 1px solid #ccc; padding: 12px 10px;
+      text-align: center; cursor: pointer; user-select: none; -webkit-user-select: none;
+      transition: background 0.15s, border-color 0.15s; border-radius: 2px;
+    }
+    .staff-card:hover { background: #fff8f0; border-color: #c00; }
+    @media(min-width:768px) { .staff-card { width: 200px; } }
+
+    /* 新增：工作人员照片样式 */
+    .staff-photo {
+      width: 120px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 2px;
+      margin: 0 auto 8px;
+      display: block;
+      background: #ddd;
+    }
+    @media(max-width:480px) {
+      .staff-photo {
+        width: 80px;
+        height: 100px;
+      }
+      #nav a { padding: 10px; font-size: 12px; flex: 1 1 auto; text-align: center; border-right:1px solid #333; border-bottom:1px solid #333; }
+      .modal { width:96%; padding:12px; max-height:85vh; }
+      .staff-card { width: calc(50% - 6px); min-width:120px; }
+      .submit-btn { width:100%; padding:14px; }
+      #header h1 { font-size:18px; }
+    }
+
+    .toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.85); color: #ffd700; padding: 12px 18px; border-radius: 6px;
+      z-index: 2000; font-size: 13px; pointer-events: none; max-width: 90vw;
+      text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.2s forwards;
+    }
+    @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+    @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateX(-50%) translateY(-10px)} }
+  </style>
+</head>
+<body class="scanlines">
+<div id="container">
+  <div id="header">
+    <div class="date" id="topDate">2010年3月15日 星期一</div>
+    <h1>CCTV-HJHL 阖家欢乐台</h1>
+    <div class="sub">国家广电总局批准 · 2007年正式开播 · 传递欢乐 共建和谐</div>
+  </div>
+  <div id="nav">
+    <a href="javascript:;" onclick="showPage('home')">首页</a>
+    <a href="javascript:;" onclick="showPage('channels')">频道节目</a>
+    <a href="javascript:;" onclick="showPage('about')">关于我们</a>
+    <a href="javascript:;" onclick="showPage('contact')">联系我们</a>
+    <a href="javascript:;" onclick="showPage('guestbook')">观众留言</a>
+    <a href="javascript:;" onclick="showPage('clues')">线索档案</a>
+  </div>
+  <div id="main">
+    <div id="sidebar">
+      <div class="side-box"><div class="side-title">快速导航</div><div class="side-content"><ul><li onclick="showPage('channels')">节目时间表</li><li onclick="showPage('news')">台内动态</li><li onclick="showPage('staff')">主创团队</li><li onclick="showPage('faq')">常见问题</li></ul></div></div>
+      <div class="side-box"><div class="side-title">已收集线索</div><div class="side-content" id="clueList"><div class="clue-item">尚未发现任何线索...</div></div></div>
+      <div class="side-box"><div class="side-title">系统公告</div><div class="side-content"><p style="color:#666;font-size:11px;">本网站将于2010年3月20日正式停止运营<br>感谢您三年来的支持</p><p style="color:red;font-size:11px;margin-top:5px;">【紧急通知】<br>请勿在凌晨2:00-4:00收看本台任何节目</p></div></div>
+    </div>
+    <div id="content">
+      <div id="page-home">
+        <div class="page-title">欢迎来到阖家欢乐台</div>
+        <p style="text-indent:2em;">CCTV-HJHL阖家欢乐台是经国家广播电影电视总局批准设立的综合性娱乐频道，于2007年2月17日正式开播。</p><br>
+        <div class="news-item" onclick="showArticle(1)"><div class="news-title">【重要公告】关于本台停播的通知</div><div class="news-meta">2010-03-01</div></div>
+        <div class="news-item" onclick="showArticle(2)"><div class="news-title">《欢乐大舞台》三月新嘉宾阵容公布</div><div class="news-meta">2010-02-28</div></div>
+        <div class="news-item" onclick="showArticle(3)"><div class="news-title">本台荣获"年度优秀文化传播单位"称号</div><div class="news-meta">2010-02-15</div></div>
+        <div class="news-item" onclick="showArticle(4)"><div class="news-title">观众来信选登：一封来自山村的感谢信</div><div class="news-meta">2010-02-10</div></div>
+        <div style="margin-top:20px;padding:10px;background:#f0f0f0;border:1px solid #ccc;"><p style="font-size:12px;color:#666;"><strong>站长提示：</strong>网站维护中，部分页面可能显示异常。如遇乱码、画面闪烁或声音异常，请立即关闭浏览器并远离电子设备。</p></div>
+      </div>
+      <div id="page-channels" style="display:none;">
+        <div class="page-title">节目时间表</div>
+        <div class="schedule-wrap"><table class="schedule-table"><tr><th>时间</th><th>周一至周五</th><th>周六</th><th>周日</th></tr><tr><td>06:00-08:00</td><td>早间新闻</td><td>周末早班车</td><td>周日特别节目</td></tr><tr><td>08:00-12:00</td><td>欢乐剧场</td><td>周末影院</td><td>经典回放</td></tr><tr><td>12:00-14:00</td><td>午间新闻+戏曲天地</td><td>综艺精选</td><td>曲艺杂坛</td></tr><tr><td>14:00-18:00</td><td>下午剧场</td><td>快乐儿童城</td><td>科技博览</td></tr><tr><td>18:00-19:00</td><td colspan="3">转播中央台新闻联播</td></tr><tr><td>19:00-21:00</td><td>黄金档剧场</td><td>欢乐大舞台</td><td>星光璀璨夜</td></tr><tr><td>21:00-23:00</td><td>晚间新闻+纪录片</td><td>综艺盛典</td><td>影视访谈</td></tr><tr><td>23:00-01:00</td><td>午夜剧场</td><td>深夜影院</td><td>怀旧经典</td></tr><tr><td class="abnormal" onclick="showArticle(7)">02:00-04:00</td><td class="abnormal">检修停播</td><td class="abnormal">检修停播</td><td class="abnormal">检修停播</td></tr><tr><td>04:00-06:00</td><td>重播节目</td><td>重播节目</td><td>重播节目</td></tr></table></div>
+        <div style="margin-top:20px;"><h3 style="color:#c00;margin-bottom:10px;">频道特色栏目</h3><div class="news-item" onclick="showChannelDetail('variety')"><div class="news-title">《欢乐大舞台》- 全民参与的综艺盛宴</div><div class="news-meta">每周六晚19:30 主持人：莫默</div></div><div class="news-item" onclick="showChannelDetail('opera')"><div class="news-title">《戏曲天地》- 弘扬国粹艺术</div><div class="news-meta">每日午间 负责人：余尘</div></div><div class="news-item" onclick="showChannelDetail('kids')"><div class="news-title">《快乐儿童城》- 孩子们的乐园</div><div class="news-meta">周六周日下午 制片人：陶铁</div></div><div class="news-item" onclick="showChannelDetail('tech')"><div class="news-title">《科技博览》- 探索未知世界</div><div class="news-meta">周日下午 主编：赵赫</div></div></div>
+      </div>
+      <div id="page-about" style="display:none;">
+        <div class="page-title">关于阖家欢乐台</div><p style="text-indent:2em;">CCTV-HJHL阖家欢乐台成立于2007年，坐落于首都北京，拥有现代化演播大厅和先进采编播设备。</p><br><p style="text-indent:2em;">三年来，我台始终坚持正确舆论导向，制作播出了一大批群众喜闻乐见的优秀节目。</p><br><h3 style="color:#c00;">组织架构</h3><ul style="margin-left:20px;line-height:2;"><li>台长办公室</li><li>新闻中心</li><li>综艺部 - 主任：莫默</li><li>戏曲部 - 主任：余尘</li><li>少儿部 - 主任：陶铁</li><li>技术部 - 主任：赵赫</li><li>行政人事部</li><li>财务室</li></ul><br><p style="color:#666;font-size:12px;">（注：原专题部于2009年11月撤销，主任单珊同志已调离。）</p>
+      </div>
+      <!-- ========== 主创团队（已替换为图片） ========== -->
+      <div id="page-staff" style="display:none;">
+        <div class="page-title">主创团队</div>
+        <div class="staff-wrap">
+          <div class="staff-card" onclick="showChannelDetail('variety')">
+            <img class="staff-photo" src="images/momo.jpg" alt="莫默">
+            <strong>莫默</strong><br>
+            <span style="font-size:12px;color:#666;">综艺部主任</span>
+            <p style="font-size:12px;">《欢乐大舞台》创办人，风格幽默。</p>
+          </div>
+          <div class="staff-card" onclick="showChannelDetail('opera')">
+            <img class="staff-photo" src="images/yuchen.jpg" alt="余尘">
+            <strong>余尘</strong><br>
+            <span style="font-size:12px;color:#666;">戏曲部主任</span>
+            <p style="font-size:12px;">戏曲表演艺术家，深居简出。</p>
+          </div>
+          <div class="staff-card" onclick="showChannelDetail('kids')">
+            <img class="staff-photo" src="images/taotie.jpg" alt="陶铁">
+            <strong>陶铁</strong><br>
+            <span style="font-size:12px;color:#666;">少儿部主任</span>
+            <p style="font-size:12px;">前儿童文学作家，寓教于乐。</p>
+          </div>
+          <div class="staff-card" onclick="showChannelDetail('tech')">
+            <img class="staff-photo" src="images/zhaohe.jpg" alt="赵赫">
+            <strong>赵赫</strong><br>
+            <span style="font-size:12px;color:#666;">技术部主任</span>
+            <p style="font-size:12px;">高级工程师，精通信号传输。</p>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding:10px;background:#f9f9f9;border:1px dashed #ccc;">
+          <p style="font-size:12px;color:#999;">往期优秀员工：单珊（2007-2009）、祝晓（2008-2009）</p>
+        </div>
+      </div>
+      <!-- ============================================= -->
+      <div id="page-contact" style="display:none;">
+        <div class="page-title">联系我们</div><p><strong>地址：</strong>北京市朝阳区星光大道88号</p><p><strong>邮编：</strong>100022</p><p><strong>热线：</strong>010-8888-XXXX</p><div style="margin-top:15px;padding:10px;background:#f0f0f0;border:1px solid #ccc;"><p style="color:red;font-size:12px;">⚠ 请勿在夜间拨打热线。<br>⚠ 收到来历不明的录像带请立即上交。</p></div>
+      </div>
+      <div id="page-guestbook" style="display:none;">
+        <div class="page-title">观众留言板</div>
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#f9f9f9;"><p><strong>快乐的小明：</strong>我最喜欢《快乐儿童城》！</p><p style="text-align:right;color:#666;font-size:11px;">2010-03-10</p></div>
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#f9f9f9;"><p><strong>老戏迷张大爷：</strong>余尘老师的戏曲栏目办得好。</p><p style="text-align:right;color:#666;font-size:11px;">2010-03-08</p></div>
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#f9f9f9;"><p><strong>匿名观众：</strong><span class="gibberish" id="msg4" onclick="revealGibberish('msg4')">勀勁勂勀勄勅勆勈勊勌勍勎勏勑勓勔動勗務勚勛勜勝勞勡勣勦勧勨勩勪勫勬勭勮勯勱勲勳勴勵勶勷勸</span></p><p style="text-align:right;color:#666;font-size:11px;">2010-02-28 02:33</p></div>
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#f9f9f9;"><p><strong>祝：</strong>找齐四个人的名字，输入到节目单里。单珊留下的档案在"关于我们"页面。</p><p style="text-align:right;color:#666;font-size:11px;">2010-02-20 23:59</p></div>
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#f9f9f9;"><p><strong>失眠的人：</strong>昨晚两点多换到你们台，画面很奇怪…</p><p style="text-align:right;color:#666;font-size:11px;">2010-02-15 04:17</p></div>
+        <div style="margin-top:20px;"><h4>发表留言</h4><textarea style="width:100%;height:80px;border:1px solid #ccc;padding:5px;" placeholder="请输入留言..."></textarea><br><button class="submit-btn" onclick="showToast('留言提交成功，等待审核。')">提交</button></div>
+      </div>
+      <div id="page-clues" style="display:none;">
+        <div class="page-title">线索档案</div><p style="color:#666;">收集到的线索会记录在这里，拼凑出真相的碎片。</p><div id="clueArchive"><p style="color:#999;">暂无线索。</p></div>
+        <div style="margin-top:30px;padding:15px;border:1px dashed #c00;background:#fff8f0;"><h4 style="color:#c00;">🔓 真相之门</h4><p style="font-size:12px;">输入正确的密码，解锁被封印的真相。</p><input type="text" class="code-input" id="finalCode" placeholder="请输入密码..." autocomplete="off"><button class="submit-btn" onclick="checkFinalCode()">确认提交</button><p class="hint-text">提示：四张档案卡，藏着四个字母密码。格式：称号首字+姓名首字</p></div>
+      </div>
+      <div id="page-truth" style="display:none;">
+        <div class="ending"><h2>—— 真 相 ——</h2><p style="text-align:left;line-height:2;">2007年，有关部门以“阖家欢乐台”为名进行秘密实验。四位“核心者”——欢神莫默、淤仙余尘、赫兆仙赵赫、饕餮仙陶铁——通过电波散播影响。</p><p style="text-align:left;line-height:2;">单珊和祝晓试图阻止，单珊用乱码封印信息，祝晓留下解密线索。2010年3月20日实验失控，电视台停播。</p><p style="text-align:left;line-height:2;color:red;">而现在，你找到了这个本该消失的网站。他们已经知道你在这里了。</p><br><p style="color:#666;">—— 第一结局 / 调查者 ——</p><br><button class="submit-btn" onclick="resetGame()">重新开始</button></div>
+      </div>
+      <div id="page-news" style="display:none;"><div class="page-title">台内动态</div><div class="news-item" onclick="showArticle(1)"><div class="news-title">停播通知</div></div><div class="news-item" onclick="showArticle(5)"><div class="news-title">设备检修</div></div><div class="news-item" onclick="showArticle(6)"><div class="news-title">职工大会</div></div></div>
+      <div id="page-faq" style="display:none;"><div class="page-title">常见问题</div><p><strong>Q：如何收看？</strong> A：卫星天线或有线电视。</p><p><strong>Q：凌晨为何无信号？</strong> A：检修，请勿搜索。</p><p><strong>Q：看完头晕恶心？</strong> A：<span class="gibberish" id="faq4" onclick="revealGibberish('faq4')">这是正常现象，说明信号正在与您的大脑同步。</span></p><p style="font-size:12px;color:#999;">[最后更新：2009年11月 编辑：单珊]</p></div>
+    </div>
+  </div>
+  <div id="footer"><p>© 2007-2010 CCTV-HJHL 阖家欢乐台 版权所有</p><p style="color:#666;">本网站将于2010年3月20日停止服务</p></div>
+</div>
+<div id="overlay" onclick="closeModal()"></div>
+<div class="modal" id="modal"><span class="modal-close" onclick="closeModal()">×</span><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+
+<script>
+  (function() {
+    // --- 游戏状态 ---
+    const gameState = {
+      clues: [],
+      currentPage: 'home',
+      gibberishUnlocked: {},
+      viewedChannels: [],
+      decodedNames: []
+    };
+
+    const clueDefinitions = {
+      'clue1': { name: '异常停播时间', desc: '凌晨2-4点标注为“检修停播”，但留言板有人声称看到了节目。' },
+      'clue2': { name: '祝的留言', desc: '神秘用户“祝”留下线索：找齐四个人的名字，单珊留下的档案在“关于我们”页面。' },
+      'clue3': { name: '四位主任', desc: '综艺部莫默、戏曲部余尘、少儿部陶铁、技术部赵赫。他们的名字暗藏玄机。' },
+      'clue4': { name: '调离的员工', desc: '单珊和祝晓在2009年底相继“调离”。她们究竟发现了什么？' },
+      'clue5': { name: '乱码留言', desc: '凌晨2:33的匿名留言被系统屏蔽，点击乱码文字或许能解读出隐藏信息。' },
+      'clue6': { name: '信号副作用', desc: 'FAQ页面提到收看后头晕恶心是“正常现象”，声称信号正在与大脑同步。' },
+      'clue7': { name: '名字的秘密', desc: '莫默=欢神，余尘=淤仙，赵赫=赫兆仙，陶铁=饕餮仙。四位核心者以化名藏在电视台里。' },
+      'clue8': { name: '翻新者', desc: '网站本该在2010年关闭，但现在仍在运行。有人在维护它，并留下了痕迹。' }
+    };
+
+    const articles = {
+      1: { title: '关于本台停播的通知', content: '<p>根据上级部署，阖家欢乐台将于2010年3月20日零时起停播。网站同步关闭。</p><p style="color:#999;font-size:12px;">（文档底部小字：<span style="color:#c00;">“关掉它。不要让他们找到你。—— 单”</span>）</p>' },
+      2: { title: '《欢乐大舞台》三月嘉宾阵容', content: '<p>三月新嘉宾阵容公布。莫默主任表示将加入更多“沉浸式互动环节”。</p><p style="color:#666;font-size:12px;">（记者：祝晓）</p>' },
+      3: { title: '年度优秀文化传播单位', content: '<p>本台荣获“优秀文化传播单位”称号，特别表扬在“观众心理引导”方面的成果。</p>' },
+      4: { title: '观众来信：山村的感谢信', content: '<p>村民来信：自从看了你们台，村里人都乐呵呵的，娃们特别能吃。</p><p style="color:#999;font-size:12px;">（红色批注：感染率97%，效果良好。—— 赵）</p>' },
+      5: { title: '技术部春季设备检修', content: '<p>赵赫主任带领完成春季检修，升级了信号发射装置，特别加强了凌晨时段的信号稳定性。</p>' },
+      6: { title: '全台职工大会', content: '<p>各部门主任发言。原专题部主任单珊同志因“个人原因”未出席。</p>' },
+      7: { title: '⚠ 检修时段警告', content: '<p style="color:red;">您点击了检修停播时间段。</p><p>官方说法：无节目播出。但多位观众报告看到了异常画面。</p><p style="color:#c00;">如果您在此时间段收看本台，请立即关闭电视。</p><p style="color:#999;font-size:11px;">[此警告由单珊于2009年11月添加]</p><p style="color:#ddd;font-size:10px;text-align:center;margin-top:15px;user-select:none;cursor:pointer;" onclick="showHiddenLog()">点击此处查看检修日志 ▸</p>' }
+    };
+
+    const channelDetails = {
+      variety: { title: '《欢乐大舞台》', content: '<p><strong>主持人：莫默</strong></p><p>本台王牌综艺，风格幽默。</p><p style="color:#999;font-size:12px;">【内部档案】代号：<span class="gibberish" onclick="revealCodeName(this, \'欢神\')">██</span><br>原型：Momus 摩墨斯</p>' },
+      opera: { title: '《戏曲天地》', content: '<p><strong>负责人：余尘</strong></p><p>弘扬国粹，长期收看后心境变得“沉静”。</p><p style="color:#999;font-size:12px;">【内部档案】代号：<span class="gibberish" onclick="revealCodeName(this, \'淤仙\')">██</span><br>职能：意志侵蚀</p>' },
+      kids: { title: '《快乐儿童城》', content: '<p><strong>制片人：陶铁</strong></p><p>孩子看完食欲大增，性格“野性难驯”。</p><p style="color:#999;font-size:12px;">【内部档案】代号：<span class="gibberish" onclick="revealCodeName(this, \'饕餮仙\')">██</span><br>原型：山海经四凶</p>' },
+      tech: { title: '《科技博览》', content: '<p><strong>主编：赵赫</strong></p><p>观众称看后脑中会出现从未学过的记忆。</p><p style="color:#999;font-size:12px;">【内部档案】代号：<span class="gibberish" onclick="revealCodeName(this, \'赫兆仙\')">██</span><br>职能：认知篡改</p>' }
+    };
+
+    // 显示页面
+    window.showPage = function(pageId) {
+      const pages = ['home','channels','about','contact','guestbook','clues','staff','news','faq','truth'];
+      pages.forEach(p => { const el = document.getElementById('page-'+p); if(el) el.style.display='none'; });
+      const target = document.getElementById('page-'+pageId);
+      if(target) target.style.display='block';
+      gameState.currentPage = pageId;
+      checkClues(pageId);
+      if(pageId==='clues') updateClueArchive();
+      updateClueList();
+      window.scrollTo({top:0,behavior:'smooth'});
+      if(Math.random()<0.1 && pageId!=='truth') triggerGlitch();
+    };
+
+    // 线索解锁
+    function checkClues(pageId) {
+      if(pageId==='channels') unlockClue('clue1');
+      if(pageId==='guestbook') { unlockClue('clue2'); unlockClue('clue5'); }
+      if(pageId==='staff') unlockClue('clue3');
+      if(pageId==='about') unlockClue('clue4');
+      if(pageId==='faq') unlockClue('clue6');
+    }
+
+    function unlockClue(clueId) {
+      if(!gameState.clues.includes(clueId)) {
+        gameState.clues.push(clueId);
+        showToast('🔍 新线索：'+clueDefinitions[clueId].name);
+        updateClueList();
+        updateClueArchive();
+      }
+    }
+
+    function updateClueList() {
+      const el = document.getElementById('clueList');
+      if(!el) return;
+      if(gameState.clues.length===0) { el.innerHTML='<div class="clue-item">尚未发现任何线索...</div>'; return; }
+      let html='';
+      gameState.clues.forEach(id=>{ if(clueDefinitions[id]) html+='<div class="clue-item unlocked">✓ '+clueDefinitions[id].name+'</div>'; });
+      html+='<div style="font-size:10px;color:#999;">已收集：'+gameState.clues.length+' / 8</div>';
+      el.innerHTML=html;
+    }
+
+    function updateClueArchive() {
+      const el = document.getElementById('clueArchive');
+      if(!el) return;
+      if(gameState.clues.length===0) { el.innerHTML='<p style="color:#999;">暂无线索。</p>'; return; }
+      let html='';
+      gameState.clues.forEach((id,i)=>{ if(clueDefinitions[id]) html+='<div style="border:1px solid #ddd;padding:10px;margin-bottom:8px;"><strong style="color:#c00;">线索'+(i+1)+'：'+clueDefinitions[id].name+'</strong><p style="font-size:12px;">'+clueDefinitions[id].desc+'</p></div>'; });
+      if(gameState.clues.length>=7) html+='<div style="padding:10px;background:#ffe0e0;border:1px solid #c00;"><strong>🔓 所有线索已集齐！</strong><p style="font-size:12px;">从四位核心者的档案中提取密码：以“称号首字+姓名首字”的格式，组合成四组字母。</p></div>';
+      el.innerHTML=html;
+    }
+
+    // 乱码解读
+    window.revealGibberish = function(id) {
+      if(gameState.gibberishUnlocked[id]) return;
+      gameState.gibberishUnlocked[id]=true;
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(id==='msg4') { el.textContent='小心四位主任。欢神掌控全局，淤仙侵蚀意志，赫兆仙篡改记忆，饕餮仙唤醒兽性。——单珊'; el.classList.add('revealed'); showToast('🔓 乱码解读！'); unlockClue('clue5'); }
+      else if(id==='faq4') { el.classList.add('revealed'); showToast('⚠ 这个回答不对劲！'); unlockClue('clue6'); }
+    };
+
+    // 解码内部档案代号
+    window.revealCodeName = function(el, codeName) {
+      if(el.textContent!=='██') return;
+      el.textContent=codeName;
+      el.classList.add('revealed');
+      showToast('🔓 档案解密：'+codeName);
+      if(!gameState.decodedNames.includes(codeName)) {
+        gameState.decodedNames.push(codeName);
+        if(gameState.decodedNames.length>=4) { unlockClue('clue7'); showToast('🔍 所有代号已解码！'); }
+      }
+    };
+
+    // 弹窗
+    function openModal(title,content) {
+      const modal=document.getElementById('modal'), overlay=document.getElementById('overlay');
+      document.getElementById('modalTitle').textContent=title;
+      document.getElementById('modalContent').innerHTML=content;
+      modal.style.display='block'; overlay.style.display='block';
+      document.body.style.overflow='hidden';
+    }
+    window.closeModal = function() {
+      document.getElementById('modal').style.display='none';
+      document.getElementById('overlay').style.display='none';
+      document.body.style.overflow='';
+    };
+    window.showArticle = function(id) { if(articles[id]) openModal(articles[id].title, articles[id].content); };
+    window.showChannelDetail = function(key) {
+      if(channelDetails[key]) {
+        if(!gameState.viewedChannels.includes(key)) gameState.viewedChannels.push(key);
+        openModal(channelDetails[key].title, channelDetails[key].content);
+      }
+    };
+
+    // 隐藏检修日志
+    window.showHiddenLog = function() {
+      closeModal();
+      openModal('🔒 检修日志 (2009.11)', '<div style="background:#111;color:#0f0;padding:15px;font-family:monospace;"><p>███系统记录：凌晨2:00-4:00信号异常</p><p>检测到未经授权的数据流</p><p>操作者：单██</p><p style="color:#ff0;">她留下的留言：“四个人的代号里藏着密码。不是称号，而是称号和名字的叠加。每个代号取两个字，组合成四组。”</p><p style="color:#ff0;">“另外……这个网站不该还存在。有人在翻新它。小心那个把网站带回来的人。”</p><p>【警告】此日志已被标记为最高机密</p></div>');
+      unlockClue('clue8');
+    };
+
+    // 最终密码
+    window.checkFinalCode = function() {
+      const input = document.getElementById('finalCode');
+      const code = input.value.trim().toUpperCase().replace(/\s+/g,'');
+      if(['HMYCZHTT','HM YC ZH TT','HM-YC-ZH-TT'].includes(code)) {
+        showToast('✅ 密码正确！');
+        closeModal();
+        setTimeout(()=>showPage('truth'),800);
+      } else if(code.length>0) {
+        showToast('❌ 密码错误。回想四位核心者的代号和姓名，取其首字母组合…');
+        input.value=''; input.focus();
+        input.style.borderColor='#c00'; setTimeout(()=>input.style.borderColor='#ccc',600);
+      } else { showToast('请输入密码。'); input.focus(); }
+    };
+
+    function resetGame() {
+      gameState.clues=[]; gameState.gibberishUnlocked={}; gameState.viewedChannels=[]; gameState.decodedNames=[];
+      document.getElementById('msg4').textContent='勀勁勂勀勄勅勆勈勊勌勍勎勏勑勓勔動勗務勚勛勜勝勞勡勣勦勧勨勩勪勫勬勭勮勯勱勲勳勴勵勶勷勸';
+      document.getElementById('msg4').classList.remove('revealed');
+      document.getElementById('faq4').classList.remove('revealed');
+      document.getElementById('finalCode').value='';
+      updateClueList(); updateClueArchive(); closeModal(); showPage('home');
+      showToast('游戏已重置。');
+    }
+    window.resetGame = resetGame;
+
+    function showToast(text) {
+      const t = document.createElement('div'); t.className='toast'; t.textContent=text;
+      document.body.appendChild(t); setTimeout(()=>t.remove(),2400);
+    }
+    window.showToast = showToast;
+
+    function triggerGlitch() {
+      if(document.body.classList.contains('glitch-active')) return;
+      document.body.classList.add('glitch-active');
+      setTimeout(()=>document.body.classList.remove('glitch-active'),600);
+    }
+
+    // 键盘
+    document.addEventListener('keydown',function(e) {
+      if(e.key==='Escape') closeModal();
+      if(e.key==='Enter' && document.activeElement===document.getElementById('finalCode')) checkFinalCode();
+    });
+
+    // 初始化
+    function init() {
+      updateClueList(); updateClueArchive(); showPage('home');
+      document.getElementById('topDate').textContent='2010年3月15日 星期一';
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+    else init();
+  })();
+</script>
+</body>
+</html>
